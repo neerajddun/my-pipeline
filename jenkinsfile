@@ -29,6 +29,12 @@ pipeline {
             }
         }
 
+        stage('Trivy FS Scan') {
+            steps {
+               sh 'trivy fs --format table --exit-code 0 --severity HIGH,CRITICAL --output trivy-fs-report.txt .'
+            }
+        }
+
         stage('SonarQube') {
             steps {
                 withSonarQubeEnv('SonarQube') {
@@ -51,6 +57,12 @@ pipeline {
                 sh "docker tag ${JOB_NAME}:v1.${BUILD_NUMBER} neeraj91/${JOB_NAME}:v1.${BUILD_NUMBER}"
                 sh "docker tag ${JOB_NAME}:v1.${BUILD_NUMBER} neeraj91/${JOB_NAME}:latest"
 
+            }
+        }
+
+        stage('Trivy Image Scan') {
+            steps {
+                sh "trivy image --format table --exit-code 0 --severity HIGH,CRITICAL --output trivy-image-report.txt ${JOB_NAME}:v1.${BUILD_NUMBER}"
             }
         }
         
