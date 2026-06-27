@@ -37,6 +37,17 @@ pipeline {
 
             }
         }
+        
+       stage('Docker Push') {
+         steps {
+              withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DockerPasswd', usernameVariable: 'DockerName')]) {
+              sh 'echo $DockerPasswd | docker login -u $DockerName --password-stdin'
+              sh "docker push neeraj91/${JOB_NAME}:v1.${BUILD_NUMBER}"
+              sh "docker push neeraj91/${JOB_NAME}:latest"
+              sh 'docker logout'            
+              }
+            }
+        }
     }
 }
 
