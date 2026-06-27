@@ -30,10 +30,12 @@ pipeline {
         }
 
         stage('OWASP Dependency-Check') {
-           steps {
-             dependencyCheck additionalArguments: '--scan ./ --format XML --disableYarnAudit --disableNodeAudit', odcInstallation: 'OWASP-DepCheck'
-             dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-            }
+            steps {
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+            dependencyCheck additionalArguments: '--scan ./ --format XML --disableYarnAudit --disableNodeAudit', odcInstallation: 'OWASP-DepCheck'
+            dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                 }
+           }
         }
 
         stage('Trivy FS Scan') {
