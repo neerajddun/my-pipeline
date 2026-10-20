@@ -1,0 +1,53 @@
+pipeline {
+
+    agent any 
+
+    environment {
+
+        IMAGE_NAME = "flask-app"
+        IMAGE_TAG = "v1.${BUILD_NUMBER}"
+    }
+
+    stages { 
+
+        stage ('Checkout') {
+
+            steps { 
+
+                checkout scm
+            }
+        }
+
+        stage ('Docker and test') {
+
+            steps {
+
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                sh ' docker tag ${IMAGE_NAME}:${IMAGE_TAG} neeraj91/${IMAGE_NAME}:${IMAGE_TAG} '
+                sh 'docker tag ${IMAGE_NAME}:${IMAGE_TAG} neeraj91/${IMAGE_NAME}:latest '
+            }
+        }
+
+        stage ('Docker Push') {
+
+            steps { 
+
+                
+            }
+        }
+
+        stage ("Deploy to Nginx") {
+
+            steps  {
+
+                sh '''
+
+                docker rm -f flask-app || true
+
+                docker run -d --name flask-app --network appnet --restart unless-stopped flask-app:${IMAGE_TAG}
+
+                '''
+            }
+        }
+    }
+}
