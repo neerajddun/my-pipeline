@@ -36,11 +36,11 @@ pipeline {
                 
                 sh '''
 
-                  echo ${DockerVars} | docker login -u ${DockerName}  --password-stangin
+                  echo ${dockerVars} | docker login -u ${dockerName}  --password-stdin
 
                   docker push  neeraj91/${IMAGE_NAME}:${IMAGE_TAG}
 
-                  docekr push  neeraj91/${IMAGE_NAME}:latest
+                  docker push  neeraj91/${IMAGE_NAME}:latest
 
                   '''
            
