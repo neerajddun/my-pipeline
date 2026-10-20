@@ -31,7 +31,20 @@ pipeline {
         stage ('Docker Push') {
 
             steps { 
+            
+               withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'dockerVars', usernameVariable: 'dockerName')]) {
+                
+                sh '''
 
+                  echo ${DockerVars} | docker login -u ${DockerName}  --password-stangin
+
+                  docker push  neeraj91/${IMAGE_NAME}:${IMAGE_TAG}
+
+                  docekr push  neeraj91/${IMAGE_NAME}:latest
+
+                  '''
+           
+                }
                 
             }
         }
